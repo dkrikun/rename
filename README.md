@@ -21,9 +21,9 @@ class HexClock
 #endif
 ```
 
-Cute! And now, rename at will: `rename.py hex_clock hacker_clock`
+Cute! And now.. rename at will! `rename.py hex_clock hacker_clock`
 
-Meet the new shiny `hacker_clock.h`:
+Then meed the new shiny `hacker_clock.h`:
 
 ```cpp
 #ifndef _HACKER_CLOCK_H
