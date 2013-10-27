@@ -42,17 +42,17 @@ class HackerClock
 
 ### What it knows to do
 
-**rename** is like a search/replace engine on steroids, it takes a string,
-usually a class/variable name, converts it to all cases (CamelCase, snake_case
-and ALL_CAPS), and replaces all matching occurances with the corresponding
-destination strings.
+**rename** is like a search/replace engine on steroids, it takes a string
+to search for, converts it to all possible cases (CamelCase, snake_case
+and ALL_CAPS), and performs a search/replace with corresponding case
+version of the destination string
 
 For example, `rename.py hex_clock hacker_clock` above, does the following
 substitutions:
 
-   `hex_clock` --> `hacker_clock`
-   `HexClock` --> `HackerClock`
-   `HEX_CLOCK` --> `HACKER_CLOCK`
+   `hex_clock` --> `hacker_clock`  
+   `HexClock` --> `HackerClock`  
+   `HEX_CLOCK` --> `HACKER_CLOCK`  
 
  - Surrounding underscores are preserved.
  - By default, rename does not consider word boundaries, i.e `HexClockTest`
