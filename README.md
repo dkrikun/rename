@@ -39,4 +39,4 @@ class HackerClock
 
 ### Dependencies
 
-Python 2.7/3.x will do.
+Python 2.7 will do.
