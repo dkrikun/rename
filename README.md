@@ -44,11 +44,11 @@ class HackerClock
 
 **rename** is like a search/replace engine on steroids, it takes a string
 to search for, converts it to all possible cases (CamelCase, snake_case
-and ALL_CAPS), and performs a search/replace with corresponding case
-version of the destination string
+and ALL_CAPS), and performs a search/replace with the corresponding case
+version of the destination string.
 
 For example, `rename.py hex_clock hacker_clock` above, does the following
-substitutions:
+substitutions in text files:
 
    `hex_clock` --> `hacker_clock`  
    `HexClock` --> `HackerClock`  
