@@ -43,8 +43,8 @@ class HackerClock
 ### What it knows to do
 
 **rename** is like a search/replace engine on steroids, it takes a string
-to search for, converts it to all possible cases (CamelCase, snake_case
-and ALL_CAPS), and performs a search/replace with the corresponding case
+to search for, converts it to all possible cases (**CamelCase**, **snake_case**
+and **ALL_CAPS**), and performs a search/replace with the corresponding case
 version of the destination string.
 
 For example, `rename.py hex_clock hacker_clock` above, does the following
@@ -54,13 +54,36 @@ substitutions in text files:
    `HexClock` --> `HackerClock`  
    `HEX_CLOCK` --> `HACKER_CLOCK`  
 
- - Surrounding underscores are preserved.
- - By default, rename does not consider word boundaries, i.e `HexClockTest`
- will become `HackerClockTest`, though it can be changed with `-w`.
- - By default, rename also performs rename of files and directories, this
- can be disabled by `-t` flag.
- - By default, the files are edited inplace, this can be altered with `-d`
- which prints the result to stdout.
+Also, by default, `hex_clock.h` is renamed to `hacker_clock.h`, this can be
+disabled with `-f` flag, see **Usage** below.
+
+### Usage
+
+```shell
+Usage: rename.py SOURCE DEST [FILES OR DIRECTORIES]
+
+
+-w, --word                  Force SOURCE to match only whole words
+--almost-word               Like -w, but also allow for any number of surrounding `_`
+-n, --dry-run               Do not rename anything, just show what it would do
+-c [CASES], --case=[CASES]  Replace only the specified cases, valid values are:
+                            `n` - none,
+                            `s` - snake,
+                            `c` - camel,
+                            `a` - all caps.
+                            Can be combined, for example `--case=cs`. If `none` is
+                            specified, performs simple search/replace without case
+                            conversions.
+                            Default is `--case=sca`.
+-d, --diff                  Shows diff instead of modifying files inplace.
+-f, --text-only             Only perform search/replace in file contents, do not rename
+                            files/directories.
+--ack                       If ack tool is installed, delegate searching patterns to it.
+-V, --verbose               Be verbose
+-q, --silent                Be silent
+--version                   Display version and exit
+-h, --help                  Display this help and exit
+```
 
 ### Dependencies
 
