@@ -54,8 +54,8 @@ substitutions in text files:
    `HexClock` --> `HackerClock`  
    `HEX_CLOCK` --> `HACKER_CLOCK`  
 
-Also, by default, `hex_clock.h` is renamed to `hacker_clock.h`, this can be
-disabled with `-f` flag, see **Usage** below.
+Also, by default, the file `hex_clock.h` is renamed to `hacker_clock.h`, file
+rename can be disabled with `-f` flag, see **Usage** below.
 
 ### Usage
 
