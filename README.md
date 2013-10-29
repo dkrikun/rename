@@ -1,6 +1,8 @@
 All hands to battle stations, rename at will!
 ======
 
+[![Build Status](https://travis-ci.org/dkrikun/rename.png)](https://travis-ci.org/dkrikun/rename)
+
 Rename a string in **CamelCase**, **snake_case** and **ALL_CAPS** in code and
 filenames in one go.
 
