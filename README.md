@@ -60,30 +60,32 @@ rename can be disabled with `-f` flag, see **Usage** below.
 ### Usage
 
 ```shell
-Usage: rename.py SOURCE DEST [FILES OR DIRECTORIES]
+usage: rename.py [-h] [--version] [-w] [--almost-word] [-n] [-d] [-f] [-a]
+                 [-V] [-q]
+                 SOURCE DEST PATTERN [PATTERN ...]
 
+Rename a string in CamelCase, snake_case and ALL_CAPS in one go
 
--w, --word                  Force SOURCE to match only whole words
---almost-word               Like -w, but also allow for any number of surrounding `_`
--n, --dry-run               Do not rename anything, just show what it would do
--c [CASES], --case=[CASES]  Replace only the specified cases, valid values are:
-                            `n` - none,
-                            `s` - snake,
-                            `c` - camel,
-                            `a` - all caps.
-                            Can be combined, for example `--case=cs`. If `none` is
-                            specified, performs simple search/replace without case
-                            conversions.
-                            Default is `--case=sca`.
--d, --diff                  Shows diff instead of modifying files inplace.
--f, --text-only             Only perform search/replace in file contents, do not rename
-                            files/directories.
---ack                       If ack tool is installed, delegate searching patterns to it.
--V, --verbose               Be verbose
--q, --silent                Be silent
---version                   Display version and exit
--h, --help                  Display this help and exit
+positional arguments:
+  SOURCE           source string to be renamed
+  DEST             string to replace with
+  PATTERN          shell-like file name patterns to process
+
+optional arguments:
+  -h, --help       show this help message and exit
+  --version        show program's version number and exit
+  -w, --word       force SOURCE to match only whole words
+  --almost-word    like -w, but also allow for any number of surrounding
+                   underscores
+  -n, --dry-run    do not change anything, just show what it would do
+  -d, --diff       shows diff instead of modifying files inplace
+  -f, --text-only  only perform search/replace in file contents, donot rename
+                   any files
+  -a, --ack        if ack tool is installed, delegate searching patterns to it
+  -V, --verbose    be verbose
+  -q, --silent     be silent
 ```
+
 
 ### Dependencies
 
