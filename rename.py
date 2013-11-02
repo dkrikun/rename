@@ -90,19 +90,25 @@ def parse_cmdline_args():
     return parser.parse_args()
 
 
-def edit_text(src, dest, word_option, text_lines):
-    """Rename in text."""
+def edit_line(src, dest, word_option, line):
+    """Rename in a single line of text."""
 
-    return text_lines
+    return line.replace(src, dest)
+
+
+def edit_text(src, dest, word_option, text_lines):
+    """Rename in lines of text."""
+
+    return [edit_line(src, dest, word_option, line) for line in text_lines]
 
 
 def process_file(src, dest, word_option, path, dry_run, diff, text_only):
-    """Rename in file."""
+    """Rename in a file."""
 
     with io.open(path, 'r', encoding='utf-8') as in_file:
         in_lines = in_file.readlines()
 
-    out_lines = edit_text(src, dest, word_option, in_lines)
+    out_lines = list(edit_text(src, dest, word_option, in_lines))
 
     with io.open(path, 'w', encoding='utf-8') as out_file:
         out_file.writelines(out_lines)
