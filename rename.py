@@ -18,6 +18,7 @@ import fnmatch
 import io
 import difflib
 import shutil
+import re
 
 # whole word options
 WHOLE_WORD = 2
@@ -84,6 +85,50 @@ def parse_cmdline_args():
     parser.add_argument('patterns', metavar='PATTERN', nargs='+',
                         help='shell-like file name patterns to process')
     return parser.parse_args()
+
+
+def is_snake_case(id_name, word_option=ANY_SEQUENCE):
+    """Check if id_name is written in snake case.
+
+    >>> is_snake_case('')
+    False
+    >>> is_snake_case('_')
+    False
+    >>> is_snake_case('h')
+    True
+    >>> is_snake_case('hello_world')
+    True
+    >>> is_snake_case(' hello_world ')
+    False
+    >>> is_snake_case('_hello')
+    False
+    >>> is_snake_case('hello_')
+    False
+    >>> is_snake_case('__hello_world__')
+    False
+    >>> is_snake_case('_hello6_wor7d_')
+    False
+    >>> is_snake_case('hello6_wor7d')
+    True
+    >>> is_snake_case('hello__world')
+    False
+    >>> is_snake_case('hello-world')
+    False
+    >>> is_snake_case('HelloWorld')
+    False
+    >>> is_snake_case('ab_6')
+    True
+    >>> is_snake_case('6_ab')
+    False
+    """
+
+    snake_case_re = re.compile("""
+            [a-z][a-z0-9]*      # first word starts with alpha
+            (_[a-z0-9]+)*       # any number of words start with alnum
+            $
+            """, re.VERBOSE)
+
+    return snake_case_re.match(id_name) is not None
 
 
 def edit_line(src, dest, word_option, line):
