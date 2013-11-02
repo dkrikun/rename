@@ -15,6 +15,7 @@ import logging
 import argparse
 import os
 import fnmatch
+import io
 
 # whole word options
 WHOLE_WORD = 2
@@ -89,6 +90,24 @@ def parse_cmdline_args():
     return parser.parse_args()
 
 
+def edit_text(src, dest, word_option, text_lines):
+    """Rename in text."""
+
+    return text_lines
+
+
+def process_file(src, dest, word_option, path, dry_run, diff, text_only):
+    """Rename in file."""
+
+    with io.open(path, 'r', encoding='utf-8') as in_file:
+        in_lines = in_file.readlines()
+
+    out_lines = edit_text(src, dest, word_option, in_lines)
+
+    with io.open(path, 'w', encoding='utf-8') as out_file:
+        out_file.writelines(out_lines)
+
+
 def main():
     """Main here."""
 
@@ -108,6 +127,9 @@ def main():
     pathes = get_paths(args.patterns, start_dir=None, max_depth=None)
     for path in pathes:
         logging.debug('renaming in {}'.format(path))
+
+        process_file(args.source, args.dest, word_option, path,
+                     args.dry_run, args.diff, args.text_only)
 
 
 if __name__ == "__main__":
