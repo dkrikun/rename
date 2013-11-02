@@ -16,6 +16,7 @@ import argparse
 import os
 import fnmatch
 import io
+import difflib
 
 # whole word options
 WHOLE_WORD = 2
@@ -110,8 +111,15 @@ def process_file(src, dest, word_option, path, dry_run, diff, text_only):
 
     out_lines = list(edit_text(src, dest, word_option, in_lines))
 
-    with io.open(path, 'w', encoding='utf-8') as out_file:
-        out_file.writelines(out_lines)
+    if diff:
+        diffs = difflib.unified_diff(in_lines, out_lines,
+                                     fromfile=path, tofile=path)
+
+        sys.stdout.write("".join(list(diffs)))
+
+    if not diff and not dry_run:
+        with io.open(path, 'w', encoding='utf-8') as out_file:
+            out_file.writelines(out_lines)
 
 
 def main():
