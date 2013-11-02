@@ -16,6 +16,11 @@ import argparse
 import os
 import fnmatch
 
+# whole word options
+WHOLE_WORD = 2
+ALLOW_UNDERSCORES = 1
+ANY_SEQUENCE = 0
+
 
 # copied from massedit.py by Jérôme Lecomte
 def get_paths(patterns, start_dir=None, max_depth=1):
@@ -92,6 +97,13 @@ def main():
     if args.silent:
         severity_level = logging.CRITICAL
     logging.basicConfig(stream=sys.stderr, level=severity_level)
+    logging.debug(args)
+
+    word_option = ANY_SEQUENCE
+    if args.word:
+        word_option = WHOLE_WORD
+    elif args.almost_word:
+        word_option = ALLOW_UNDERSCORES
 
     pathes = get_paths(args.patterns, start_dir=None, max_depth=None)
     for path in pathes:
