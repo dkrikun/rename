@@ -90,6 +90,9 @@ def parse_cmdline_args():
 def is_snake_case(id_name, word_option=ANY_SEQUENCE):
     """Check if id_name is written in snake case.
 
+    Actually, it is restricted to a certain subset of snake case, so that
+    we can guarantee camel->snake->camel roundtrip.
+
     >>> is_snake_case('')
     False
     >>> is_snake_case('_')
@@ -116,15 +119,19 @@ def is_snake_case(id_name, word_option=ANY_SEQUENCE):
     False
     >>> is_snake_case('HelloWorld')
     False
-    >>> is_snake_case('ab_6')
+    >>> is_snake_case('ab6')
     True
+    >>> is_snake_case('ab_6')
+    False
     >>> is_snake_case('6_ab')
+    False
+    >>> is_snake_case('ab_6_ab6')
     False
     """
 
-    snake_case_re = re.compile("""
-            [a-z][a-z0-9]*      # first word starts with alpha
-            (_[a-z0-9]+)*       # any number of words start with alnum
+    snake_case_re = re.compile(r"""
+            [a-z][a-z0-9]*      # first word is required, start w/ alpha
+            (_[a-z][a-z0-9]*)*  # any number of words follow
             $
             """, re.VERBOSE)
 
@@ -162,9 +169,11 @@ def is_camel_case(id_name, word_option=ANY_SEQUENCE):
     False
     >>> is_camel_case('HelloWorld')
     True
+    >>> is_camel_case('HelloGoodWorld77')
+    True
     """
 
-    camel_case_re = re.compile("""
+    camel_case_re = re.compile(r"""
             [A-Z](?![A-Z])[a-z0-9]*    # first word starts with alpha
                                        # neg lookahead is to exclude e.g HWorld
             ([A-Z][a-z0-9]+)*          # any number of words start with alnum
@@ -172,6 +181,61 @@ def is_camel_case(id_name, word_option=ANY_SEQUENCE):
             """, re.VERBOSE)
 
     return camel_case_re.match(id_name) is not None
+
+
+def snake2camel(id_name):
+    """Change id_name from snake to camel, provided it is in snake case,
+    or else return id_name intact.
+
+    >>> snake2camel('hello_world')
+    'HelloWorld'
+    >>> snake2camel('HelloWorld')
+    'HelloWorld'
+    >>> snake2camel('hello9')
+    'Hello9'
+    >>> snake2camel('hello9world')
+    'Hello9world'
+    >>> snake2camel('hello9_world')
+    'Hello9World'
+    >>> snake2camel('h')
+    'H'
+    >>> snake2camel('hw')
+    'Hw'
+    >>> snake2camel('hello_good_world77')
+    'HelloGoodWorld77'
+    """
+
+    if not is_snake_case(id_name):
+        return id_name
+
+    word_start = re.compile(r'(\A|_)[a-z]')
+    return word_start.sub(lambda x: x.group().lstrip('_').upper(), id_name)
+
+
+def camel2snake(id_name):
+    """Change id_name from camel to snake, provided it is in camel case,
+    or else return id_name intact.
+
+    >>> camel2snake('HelloWorld')
+    'hello_world'
+    >>> camel2snake('hello_world')
+    'hello_world'
+    >>> camel2snake('Hello8orld')
+    'hello8orld'
+    >>> camel2snake('H')
+    'h'
+    >>> camel2snake('Hw')
+    'hw'
+    >>> camel2snake('HelloGoodWorld77')
+    'hello_good_world77'
+    """
+
+    if not is_camel_case(id_name):
+        return id_name
+
+    word_start = re.compile(r'[A-Z]')
+    almost_ready = word_start.sub(lambda x: '_' + x.group().lower(), id_name)
+    return almost_ready.lstrip('_')
 
 
 def edit_line(src, dest, word_option, line):
