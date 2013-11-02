@@ -79,7 +79,6 @@ optional arguments:
   -w, --word       force SOURCE to match only whole words
   --almost-word    like -w, but also allow for any number of surrounding
                    underscores
-  -n, --dry-run    do not change anything, just show what it would do
   -d, --diff       shows diff instead of modifying files inplace
   -f, --text-only  only perform search/replace in file contents, donot rename
                    any files

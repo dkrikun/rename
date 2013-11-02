@@ -66,9 +66,6 @@ def parse_cmdline_args():
     word_group.add_argument('--almost-word', action='store_true',
                             help='like -w, but also allow for any number of '
                             'surrounding underscores')
-    parser.add_argument('-n', '--dry-run', action='store_true',
-                        help='do not change anything, just show what it '
-                        'would do')
     parser.add_argument('-d', '--diff', action='store_true',
                         help='shows diff instead of modifying files inplace')
     parser.add_argument('-f', '--text-only', action='store_true',
@@ -103,7 +100,7 @@ def edit_text(src, dest, word_option, text_lines):
     return [edit_line(src, dest, word_option, line) for line in text_lines]
 
 
-def process_file(src, dest, word_option, path, dry_run, diff, text_only):
+def process_file(src, dest, word_option, path, diff, text_only):
     """Rename in a file."""
 
     with io.open(path, 'r', encoding='utf-8') as in_file:
@@ -117,7 +114,7 @@ def process_file(src, dest, word_option, path, dry_run, diff, text_only):
 
         sys.stdout.write("".join(list(diffs)))
 
-    if not diff and not dry_run:
+    else:
         with io.open(path, 'w', encoding='utf-8') as out_file:
             out_file.writelines(out_lines)
 
@@ -143,7 +140,7 @@ def main():
         logging.debug('renaming in {}'.format(path))
 
         process_file(args.source, args.dest, word_option, path,
-                     args.dry_run, args.diff, args.text_only)
+                     args.diff, args.text_only)
 
 
 if __name__ == "__main__":
