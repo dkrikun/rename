@@ -238,16 +238,41 @@ def camel2snake(id_name):
     return almost_ready.lstrip('_')
 
 
-def edit_line(src, dest, word_option, line):
-    """Rename in a single line of text."""
+def edit_line(src, dest, line, word_option=ANY_SEQUENCE):
+    """Rename in a single line of text.
 
-    return line.replace(src, dest)
+    >>> edit_line('hello_world', 'whats_up', 'hi hello_world <3')
+    'hi whats_up <3'
+    >>> edit_line('hello_world', 'whats_up', 'hi HelloWorld HELLO_WORLD <3')
+    'hi WhatsUp WHATS_UP <3'
+    >>> edit_line('HelloWorld', 'WhatsUp', 'hi HelloWorld HELLO_WORLD <3')
+    'hi WhatsUp WHATS_UP <3'
+    >>> edit_line('hello__world', 'WhatsUp', 'hi hello__world HELLO_WORLD <3')
+    'hi WhatsUp HELLO_WORLD <3'
+    """
+
+    src_snake = camel2snake(src)
+    dest_snake = camel2snake(dest)
+    src_camel = snake2camel(src)
+    dest_camel = snake2camel(dest)
+
+    # if not recognized as snake or camel, both transforms will leave its
+    # input string intact
+
+    recognized = src_snake != src_camel and dest_snake != dest_camel
+    if not recognized:
+        logging.warning('case not recognized, performing plain search/replace')
+        return line.replace(src, dest)
+
+    line = line.replace(src_snake, dest_snake)
+    line = line.replace(src_camel, dest_camel)
+    return line.replace(src_snake.upper(), dest_snake.upper())
 
 
-def edit_text(src, dest, word_option, text_lines):
+def edit_text(src, dest, text_lines, word_option=ANY_SEQUENCE):
     """Rename in lines of text."""
 
-    return [edit_line(src, dest, word_option, line) for line in text_lines]
+    return [edit_line(src, dest, line, word_option) for line in text_lines]
 
 
 def process_file(src, dest, word_option, path, diff, text_only):
@@ -261,7 +286,7 @@ def process_file(src, dest, word_option, path, diff, text_only):
     with io.open(path, 'r', encoding='utf-8') as in_file:
         in_lines = in_file.readlines()
 
-    out_lines = list(edit_text(src, dest, word_option, in_lines))
+    out_lines = list(edit_text(src, dest, in_lines, word_option))
 
     if diff:
         diffs = difflib.unified_diff(in_lines, out_lines,
