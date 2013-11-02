@@ -90,11 +90,10 @@ def main():
     if args.silent:
         severity_level = logging.CRITICAL
     logging.basicConfig(stream=sys.stderr, level=severity_level)
-    logging.debug(args)
 
     pathes = get_paths(args.patterns, start_dir=None, max_depth=None)
     for path in pathes:
-        logging.debug(path)
+        logging.debug('renaming in {}'.format(path))
 
 
 if __name__ == "__main__":
