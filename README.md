@@ -17,7 +17,10 @@ Say you've got a cool `hex_clock.cpp`:
 
 class HexClock
 {
-  // ... good stuff here
+    int hex_clock();
+
+    private:
+    int hex_clock_;
 };
 
 #endif
@@ -36,7 +39,10 @@ Meet the new shiny `hacker_clock.h`:
 
 class HackerClock
 {
-  // ... good stuff here
+    int hacker_clock();
+
+    private:
+    int hacker_clock_;
 };
 
 #endif
@@ -80,7 +86,7 @@ optional arguments:
   --almost-word    like -w, but also allow for any number of surrounding
                    underscores
   -d, --diff       shows diff instead of modifying files inplace
-  -f, --text-only  only perform search/replace in file contents, donot rename
+  -f, --text-only  only perform search/replace in file contents, do not rename
                    any files
   -V, --verbose    be verbose
   -q, --silent     be silent
@@ -89,4 +95,4 @@ optional arguments:
 
 ### Dependencies
 
-Python 2.7 will do.
+Python 2.7/3.x will do.
