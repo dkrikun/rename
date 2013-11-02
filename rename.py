@@ -70,10 +70,11 @@ def parse_cmdline_args():
     parser.add_argument('-a', '--ack', action='store_true',
                         help='if ack tool is installed, delegate searching '
                         'patterns to it')
-    parser.add_argument('-V', '--verbose', action='store_true',
-                        help='be verbose')
-    parser.add_argument('-q', '--silent', action='store_true',
-                        help='be silent')
+    verbosity_group = parser.add_mutually_exclusive_group()
+    verbosity_group.add_argument('-V', '--verbose', action='store_true',
+                                 help='be verbose')
+    verbosity_group.add_argument('-q', '--silent', action='store_true',
+                                 help='be silent')
     parser.add_argument('source', metavar='SOURCE', nargs=1,
                         help='source string to be renamed')
     parser.add_argument('dest', metavar='DEST', nargs=1,
