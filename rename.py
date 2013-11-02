@@ -81,9 +81,9 @@ def parse_cmdline_args():
                                  help='be verbose')
     verbosity_group.add_argument('-q', '--silent', action='store_true',
                                  help='be silent')
-    parser.add_argument('source', metavar='SOURCE', nargs=1,
+    parser.add_argument('source', metavar='SOURCE',
                         help='source string to be renamed')
-    parser.add_argument('dest', metavar='DEST', nargs=1,
+    parser.add_argument('dest', metavar='DEST',
                         help='string to replace with')
     parser.add_argument('patterns', metavar='PATTERN', nargs='+',
                         help='shell-like file name patterns to process')
