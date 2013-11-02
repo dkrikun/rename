@@ -82,7 +82,6 @@ optional arguments:
   -d, --diff       shows diff instead of modifying files inplace
   -f, --text-only  only perform search/replace in file contents, donot rename
                    any files
-  -a, --ack        if ack tool is installed, delegate searching patterns to it
   -V, --verbose    be verbose
   -q, --silent     be silent
 ```
