@@ -87,7 +87,7 @@ def parse_cmdline_args():
     return parser.parse_args()
 
 
-def is_snake_case(id_name, word_option=ANY_SEQUENCE):
+def is_snake_case(id_name):
     """Check if id_name is written in snake case.
 
     Actually, it is restricted to a certain subset of snake case, so that
@@ -138,7 +138,7 @@ def is_snake_case(id_name, word_option=ANY_SEQUENCE):
     return snake_case_re.match(id_name) is not None
 
 
-def is_camel_case(id_name, word_option=ANY_SEQUENCE):
+def is_camel_case(id_name):
     """Check if id_name is written in camel case.
 
     >>> is_camel_case('')
@@ -249,24 +249,73 @@ def edit_line(src, dest, line, word_option=ANY_SEQUENCE):
     'hi WhatsUp WHATS_UP <3'
     >>> edit_line('hello__world', 'WhatsUp', 'hi hello__world HELLO_WORLD <3')
     'hi WhatsUp HELLO_WORLD <3'
+    >>> edit_line('hello_world', 'whats_up', 'hi hello_world <3', WHOLE_WORD)
+    'hi whats_up <3'
+    >>> edit_line('hello_world', 'whats_up', 'hiRhello_worldR<3', ANY_SEQUENCE)
+    'hiRwhats_upR<3'
+    >>> edit_line('hello_world', 'whats_up', 'hiRhello_worldR<3', WHOLE_WORD)
+    'hiRhello_worldR<3'
+    >>> edit_line('hello_world', 'whats_up', 'hiRhello_worldR<3', ALLOW_UNDERSCORES)
+    'hiRhello_worldR<3'
+    >>> edit_line('hello_world', 'whats_up', '___hello_world__', ANY_SEQUENCE)
+    '___whats_up__'
+    >>> edit_line('hello_world', 'whats_up', '___hello_world__', ALLOW_UNDERSCORES)
+    '___whats_up__'
+    >>> edit_line('hello_world', 'whats_up', '___hello_world__', WHOLE_WORD)
+    '___hello_world__'
+    >>> edit_line('hello_world', 'whats_up', '___HelloWorld__', ALLOW_UNDERSCORES)
+    '___WhatsUp__'
+    >>> edit_line('hex_clock', 'hacker_clock', '#ifndef _HEX_CLOCK_H', ALLOW_UNDERSCORES)
+    '#ifndef _HACKER_CLOCK_H'
     """
 
     src_snake = camel2snake(src)
     dest_snake = camel2snake(dest)
     src_camel = snake2camel(src)
     dest_camel = snake2camel(dest)
+    src_all_caps = src_snake.upper()
+    dest_all_caps = dest_snake.upper()
 
     # if not recognized as snake or camel, both transforms will leave its
     # input string intact
 
     recognized = src_snake != src_camel and dest_snake != dest_camel
     if not recognized:
-        logging.warning('case not recognized, performing plain search/replace')
+        logging.debug('case not recognized, performing plain search/replace')
         return line.replace(src, dest)
 
-    line = line.replace(src_snake, dest_snake)
-    line = line.replace(src_camel, dest_camel)
-    return line.replace(src_snake.upper(), dest_snake.upper())
+    if word_option == ANY_SEQUENCE:
+        line = line.replace(src_snake, dest_snake)
+        line = line.replace(src_camel, dest_camel)
+        return line.replace(src_all_caps, dest_all_caps)
+
+    if word_option == WHOLE_WORD:
+        template = r'\b{}\b'
+
+        src_snake = template.format(src_snake)
+        src_camel = template.format(src_camel)
+        src_all_caps = template.format(src_all_caps)
+
+        line = re.sub(src_snake, dest_snake, line)
+        line = re.sub(src_camel, dest_camel, line)
+        return re.sub(src_all_caps, dest_all_caps, line)
+
+    if word_option == ALLOW_UNDERSCORES:
+        src_template = r'(\b|(_+)){}((_+)|\b)'
+        dest_template = r'\1{}\3'
+
+        src_snake = src_template.format(src_snake)
+        src_camel = src_template.format(src_camel)
+        src_all_caps = src_template.format(src_all_caps)
+
+        dest_snake = dest_template.format(dest_snake)
+        dest_camel = dest_template.format(dest_camel)
+        dest_all_caps = dest_template.format(dest_all_caps)
+
+        logging.debug('underscore caps: {}->{}'.format(src_all_caps, dest_all_caps))
+        line = re.sub(src_snake, dest_snake, line)
+        line = re.sub(src_camel, dest_camel, line)
+        return re.sub(src_all_caps, dest_all_caps, line)
 
 
 def edit_text(src, dest, text_lines, word_option=ANY_SEQUENCE):
@@ -279,7 +328,7 @@ def process_file(src, dest, word_option, path, diff, text_only):
     """Rename in a file."""
 
     if not text_only:
-        new_path = edit_line(src, dest, word_option, path)
+        new_path = edit_line(src, dest, path, word_option)
     else:
         new_path = path
 
