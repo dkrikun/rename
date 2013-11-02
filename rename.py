@@ -13,6 +13,37 @@ __license__ = 'MIT'
 import sys
 import logging
 import argparse
+import os
+import fnmatch
+
+
+# copied from massedit.py by Jérôme Lecomte
+def get_paths(patterns, start_dir=None, max_depth=1):
+    """Retrieve files that match any of the patterns."""
+
+    # Shortcut: if there is only one pattern, make sure we process just that.
+    if len(patterns) == 1 and not start_dir:
+        pattern = patterns[0]
+        directory = os.path.dirname(pattern)
+        if directory:
+            patterns = [os.path.basename(pattern)]
+            start_dir = directory
+            max_depth = 1
+
+    if not start_dir:
+        start_dir = os.getcwd()
+    for root, dirs, files in os.walk(start_dir):  # pylint: disable=W0612
+        if max_depth is not None:
+            relpath = os.path.relpath(root, start=start_dir)
+            depth = len(relpath.split(os.sep))
+            if depth > max_depth:
+                continue
+        names = []
+        for pattern in patterns:
+            names += fnmatch.filter(files, pattern)
+        for name in names:
+            path = os.path.join(root, name)
+            yield path
 
 
 def parse_cmdline_args():
@@ -58,6 +89,10 @@ def main():
     severity_level = logging.DEBUG if args.verbose else logging.WARNING
     logging.basicConfig(stream=sys.stderr, level=severity_level)
     logging.debug(args)
+
+    pathes = get_paths(args.patterns, start_dir=None, max_depth=None)
+    for path in pathes:
+        logging.debug(path)
 
 
 if __name__ == "__main__":
