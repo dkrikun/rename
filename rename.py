@@ -131,6 +131,49 @@ def is_snake_case(id_name, word_option=ANY_SEQUENCE):
     return snake_case_re.match(id_name) is not None
 
 
+def is_camel_case(id_name, word_option=ANY_SEQUENCE):
+    """Check if id_name is written in camel case.
+
+    >>> is_camel_case('')
+    False
+    >>> is_camel_case('_')
+    False
+    >>> is_camel_case('h')
+    False
+    >>> is_camel_case('H')
+    True
+    >>> is_camel_case('HW')
+    False
+    >>> is_camel_case('hW')
+    False
+    >>> is_camel_case('HelloWorld')
+    True
+    >>> is_camel_case('HWorld')
+    False
+    >>> is_camel_case('Hello6orld')
+    True
+    >>> is_camel_case('hello_world')
+    False
+    >>> is_camel_case('_Hello')
+    False
+    >>> is_camel_case('Hello_')
+    False
+    >>> is_camel_case('hello-world')
+    False
+    >>> is_camel_case('HelloWorld')
+    True
+    """
+
+    camel_case_re = re.compile("""
+            [A-Z](?![A-Z])[a-z0-9]*    # first word starts with alpha
+                                       # neg lookahead is to exclude e.g HWorld
+            ([A-Z][a-z0-9]+)*          # any number of words start with alnum
+            $
+            """, re.VERBOSE)
+
+    return camel_case_re.match(id_name) is not None
+
+
 def edit_line(src, dest, word_option, line):
     """Rename in a single line of text."""
 
