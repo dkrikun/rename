@@ -251,22 +251,22 @@ def edit_line(src, dest, line, word_option=ANY_SEQUENCE):
     'hi WhatsUp HELLO_WORLD <3'
     >>> edit_line('hello_world', 'whats_up', 'hi hello_world <3', WHOLE_WORD)
     'hi whats_up <3'
-    >>> edit_line('hello_world', 'whats_up', 'hiRhello_worldR<3', ANY_SEQUENCE)
+    >>> edit_line('hl_wrld', 'whats_up', 'hiRhl_wrldR<3', ANY_SEQUENCE)
     'hiRwhats_upR<3'
-    >>> edit_line('hello_world', 'whats_up', 'hiRhello_worldR<3', WHOLE_WORD)
-    'hiRhello_worldR<3'
-    >>> edit_line('hello_world', 'whats_up', 'hiRhello_worldR<3', ALLOW_UNDERSCORES)
-    'hiRhello_worldR<3'
-    >>> edit_line('hello_world', 'whats_up', '___hello_world__', ANY_SEQUENCE)
+    >>> edit_line('hl_wrld', 'whats_up', 'hiRhl_wrldR<3', WHOLE_WORD)
+    'hiRhl_wrldR<3'
+    >>> edit_line('hl_wrld', 'whats_up', 'hiRhl_wrldR<3', ALLOW_UNDERSCORES)
+    'hiRhl_wrldR<3'
+    >>> edit_line('hl_wrld', 'whats_up', '___hl_wrld__', ANY_SEQUENCE)
     '___whats_up__'
-    >>> edit_line('hello_world', 'whats_up', '___hello_world__', ALLOW_UNDERSCORES)
+    >>> edit_line('hl_wrld', 'whats_up', '___hl_wrld__', ALLOW_UNDERSCORES)
     '___whats_up__'
-    >>> edit_line('hello_world', 'whats_up', '___hello_world__', WHOLE_WORD)
-    '___hello_world__'
-    >>> edit_line('hello_world', 'whats_up', '___HelloWorld__', ALLOW_UNDERSCORES)
+    >>> edit_line('hl_wrld', 'whats_up', '___hl_wrld__', WHOLE_WORD)
+    '___hl_wrld__'
+    >>> edit_line('hl_wrld', 'whats_up', '___HlWrld__', ALLOW_UNDERSCORES)
     '___WhatsUp__'
-    >>> edit_line('hex_clock', 'hacker_clock', '#ifndef _HEX_CLOCK_H', ALLOW_UNDERSCORES)
-    '#ifndef _HACKER_CLOCK_H'
+    >>> edit_line('hex_clck', 'hacker_clck', '_HEX_CLCK_H', ALLOW_UNDERSCORES)
+    '_HACKER_CLCK_H'
     """
 
     src_snake = camel2snake(src)
@@ -312,7 +312,8 @@ def edit_line(src, dest, line, word_option=ANY_SEQUENCE):
         dest_camel = dest_template.format(dest_camel)
         dest_all_caps = dest_template.format(dest_all_caps)
 
-        logging.debug('underscore caps: {}->{}'.format(src_all_caps, dest_all_caps))
+        logging.debug('underscore caps: {}->{}'.format(src_all_caps,
+                      dest_all_caps))
         line = re.sub(src_snake, dest_snake, line)
         line = re.sub(src_camel, dest_camel, line)
         return re.sub(src_all_caps, dest_all_caps, line)
@@ -324,7 +325,8 @@ def edit_text(src, dest, text_lines, word_option=ANY_SEQUENCE):
     return [edit_line(src, dest, line, word_option) for line in text_lines]
 
 
-def process_file(src, dest, word_option, path, diff, text_only):
+def process_file(src, dest, word_option, path,  # pylint: disable=R0913
+                 diff, text_only):
     """Rename in a file."""
 
     if not text_only:
