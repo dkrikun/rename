@@ -87,6 +87,8 @@ def main():
 
     args = parse_cmdline_args()
     severity_level = logging.DEBUG if args.verbose else logging.WARNING
+    if args.silent:
+        severity_level = logging.CRITICAL
     logging.basicConfig(stream=sys.stderr, level=severity_level)
     logging.debug(args)
 
