@@ -53,11 +53,12 @@ def parse_cmdline_args():
                                      ', snake_case and ALL_CAPS in one go')
     parser.add_argument('--version', action='version',
                         version='%(prog)s {}'.format(__version__))
-    parser.add_argument('-w', '--word', action='store_true',
-                        help='force SOURCE to match only whole words')
-    parser.add_argument('--almost-word', action='store_true',
-                        help='like -w, but also allow for any number of '
-                        'surrounding underscores')
+    word_group = parser.add_mutually_exclusive_group()
+    word_group.add_argument('-w', '--word', action='store_true',
+                            help='force SOURCE to match only whole words')
+    word_group.add_argument('--almost-word', action='store_true',
+                            help='like -w, but also allow for any number of '
+                            'surrounding underscores')
     parser.add_argument('-n', '--dry-run', action='store_true',
                         help='do not change anything, just show what it '
                         'would do')
