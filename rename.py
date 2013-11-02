@@ -153,6 +153,10 @@ def is_camel_case(id_name):
     False
     >>> is_camel_case('hW')
     False
+    >>> is_camel_case('hWW')
+    False
+    >>> is_camel_case('WhWhWhW')
+    True
     >>> is_camel_case('HelloWorld')
     True
     >>> is_camel_case('HWorld')
@@ -174,9 +178,8 @@ def is_camel_case(id_name):
     """
 
     camel_case_re = re.compile(r"""
-            [A-Z](?![A-Z])[a-z0-9]*    # first word starts with alpha
-                                       # neg lookahead is to exclude e.g HWorld
-            ([A-Z][a-z0-9]+)*          # any number of words start with alnum
+            ([A-Z](?![A-Z])[a-z0-9]*)+    # neg lookahead is to exclude
+                                          # e.g HWorld
             $
             """, re.VERBOSE)
 
