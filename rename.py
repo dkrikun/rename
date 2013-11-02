@@ -17,6 +17,7 @@ import os
 import fnmatch
 import io
 import difflib
+import shutil
 
 # whole word options
 WHOLE_WORD = 2
@@ -103,6 +104,11 @@ def edit_text(src, dest, word_option, text_lines):
 def process_file(src, dest, word_option, path, diff, text_only):
     """Rename in a file."""
 
+    if not text_only:
+        new_path = edit_line(src, dest, word_option, path)
+    else:
+        new_path = path
+
     with io.open(path, 'r', encoding='utf-8') as in_file:
         in_lines = in_file.readlines()
 
@@ -110,13 +116,15 @@ def process_file(src, dest, word_option, path, diff, text_only):
 
     if diff:
         diffs = difflib.unified_diff(in_lines, out_lines,
-                                     fromfile=path, tofile=path)
-
-        sys.stdout.write("".join(list(diffs)))
-
+                                     fromfile=path, tofile=new_path)
+        for line in diffs:
+            sys.stdout.write(line)
     else:
-        with io.open(path, 'w', encoding='utf-8') as out_file:
+        with io.open(new_path, 'w', encoding='utf-8') as out_file:
             out_file.writelines(out_lines)
+        if new_path != path:
+            shutil.copymode(path, new_path)
+            os.unlink(path)
 
 
 def main():
