@@ -360,8 +360,17 @@ def process_file(src, dest, word_option, path,  # pylint: disable=R0913
     else:
         new_path = path
 
-    with io.open(path, 'r', encoding='utf-8') as in_file:
-        in_lines = in_file.readlines()
+    try:
+        with io.open(path, 'r', encoding='utf-8') as in_file:
+            in_lines = in_file.readlines()
+    except IOError as e:
+        logging.warn('could not read file: {0}, error message: {1}'
+                .format(path, e))
+        return
+    except UnicodeDecodeError as e:
+        logging.debug('could not read file: {0}, error message: {1}'
+                .format(path, e))
+        return
 
     out_lines = list(edit_text(src, dest, in_lines, word_option))
 
@@ -371,11 +380,21 @@ def process_file(src, dest, word_option, path,  # pylint: disable=R0913
         for line in diffs:
             sys.stdout.write(line)
     else:
-        with io.open(new_path, 'w', encoding='utf-8') as out_file:
-            out_file.writelines(out_lines)
+        try:
+            with io.open(new_path, 'w', encoding='utf-8') as out_file:
+                out_file.writelines(out_lines)
+        except IOError as e:
+            logging.warn('could not read file: {0}, error message: {1}'
+                    .format(path, e))
+
         if new_path != path:
             shutil.copymode(path, new_path)
-            os.unlink(path)
+            try:
+                os.unlink(path)
+            except OSError as e:
+                logging.warn('could not delete file: {0}, error message: {1}'
+                        .format(path,e))
+                return
 
 
 def main():
