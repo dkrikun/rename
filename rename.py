@@ -404,7 +404,8 @@ def main():
     severity_level = logging.DEBUG if args.verbose else logging.WARNING
     if args.silent:
         severity_level = logging.CRITICAL
-    logging.basicConfig(stream=sys.stderr, level=severity_level)
+    logging.basicConfig(stream=sys.stderr, level=severity_level,
+            format='%(message)s')
     logging.debug(args)
 
     word_option = ANY_SEQUENCE
