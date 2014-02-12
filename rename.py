@@ -25,6 +25,26 @@ WHOLE_WORD = 2
 ALLOW_UNDERSCORES = 1
 ANY_SEQUENCE = 0
 
+def is_binary(filename):
+    """Return true if the given filename is binary.
+    @raise EnvironmentError: if the file does not exist or cannot be accessed.
+    @attention: found @ http://bytes.com/topic/python/answers/21222-determine-file-type-binary-text on 6/08/2010
+    @author: Trent Mick <TrentM@ActiveState.com>
+    @author: Jorge Orpinel <jorge@orpinel.com>"""
+    fin = open(filename, 'rb')
+    try:
+        CHUNKSIZE = 1024
+        while 1:
+            chunk = fin.read(CHUNKSIZE)
+            if '\0' in chunk: # found null byte
+                return True
+            if len(chunk) < CHUNKSIZE:
+                break # done
+    # A-wooo! Mira, python no necesita el "except:". Achis... Que listo es.
+    finally:
+        fin.close()
+
+    return False
 
 # copied from massedit.py by Jérôme Lecomte
 def get_paths(patterns, start_dir=None, max_depth=1):
@@ -331,6 +351,9 @@ def edit_text(src, dest, text_lines, word_option=ANY_SEQUENCE):
 def process_file(src, dest, word_option, path,  # pylint: disable=R0913
                  diff, text_only):
     """Rename in a file."""
+
+    if is_binary(path):
+        return
 
     if not text_only:
         new_path = edit_line(src, dest, path, word_option)
