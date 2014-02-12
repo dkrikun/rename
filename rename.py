@@ -65,6 +65,9 @@ def get_paths(patterns, start_dir=None, max_depth=1):
         if '.git' in dirs:
             dirs.remove('.git')     # do not visit .git
 
+        if '.hg' in dirs:
+            dirs.remove('.hg')      # do not visit .hg
+
         if max_depth is not None:
             relpath = os.path.relpath(root, start=start_dir)
             depth = len(relpath.split(os.sep))
