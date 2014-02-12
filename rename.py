@@ -6,7 +6,7 @@ Rename a string in CamelCase, snake_case and ALL_CAPS_CASE
 in code and filenames in one go.
 """
 
-__version__ = '0.1.0'
+__version__ = '0.1.1'
 __author__ = 'Daniel Krikun'
 __license__ = 'MIT'
 
