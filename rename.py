@@ -388,8 +388,8 @@ def process_file(src, dest, word_option, path,  # pylint: disable=R0913
                     .format(path, e))
 
         if new_path != path:
-            shutil.copymode(path, new_path)
             try:
+                shutil.copymode(path, new_path)
                 os.unlink(path)
             except OSError as e:
                 logging.warn('could not delete file: {0}, error message: {1}'
