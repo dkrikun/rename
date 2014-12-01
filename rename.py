@@ -470,45 +470,36 @@ def edit_line(src, dest, line, word_option=ANY_SEQUENCE):
         logging.debug('case not recognized, performing plain search/replace')
         return line.replace(src, dest)
 
+    subst_pairs = (
+        (src_snake, dest_snake),
+        (src_camel, dest_camel),
+        (src_lowercamel, dest_lowercamel),
+        (src_all_caps, dest_all_caps),
+    )
+
     if word_option == ANY_SEQUENCE:
-        line = line.replace(src_snake, dest_snake)
-        line = line.replace(src_camel, dest_camel)
-        line = line.replace(src_lowercamel, dest_lowercamel)
-        return line.replace(src_all_caps, dest_all_caps)
+        for _src, _dest in subst_pairs:
+            line = line.replace(_src, _dest)
+        return line
 
     if word_option == WHOLE_WORD:
         template = r'\b{}\b'
 
-        src_snake = template.format(src_snake)
-        src_camel = template.format(src_camel)
-        src_lowercamel = template.format(src_lowercamel)
-        src_all_caps = template.format(src_all_caps)
-
-        line = re.sub(src_snake, dest_snake, line)
-        line = re.sub(src_camel, dest_camel, line)
-        line = re.sub(src_lowercamel, dest_lowercamel, line)
-        return re.sub(src_all_caps, dest_all_caps, line)
+        pairs = [(template.format(_src), _dest) for _src, _dest in subst_pairs]
+        for _src, _dest in pairs:
+            line = re.sub(_src, _dest, line)
+        return line
 
     if word_option == ALLOW_UNDERSCORES:
         src_template = r'(\b|(_+)){}((_+)|\b)'
         dest_template = r'\1{}\3'
 
-        src_snake = src_template.format(src_snake)
-        src_camel = src_template.format(src_camel)
-        src_lowercamel = src_template.format(src_lowercamel)
-        src_all_caps = src_template.format(src_all_caps)
+        pairs = [(src_template.format(_src), dest_template.format(_dest))
+                 for _src, _dest in subst_pairs]
 
-        dest_snake = dest_template.format(dest_snake)
-        dest_camel = dest_template.format(dest_camel)
-        dest_lowercamel = src_template.format(dest_lowercamel)
-        dest_all_caps = dest_template.format(dest_all_caps)
-
-        logging.debug('underscore caps: {}->{}'.format(src_all_caps,
-                      dest_all_caps))
-        line = re.sub(src_snake, dest_snake, line)
-        line = re.sub(src_camel, dest_camel, line)
-        line = re.sub(src_lowercamel, dest_lowercamel, line)
-        return re.sub(src_all_caps, dest_all_caps, line)
+        for _src, _dest in pairs:
+            line = re.sub(_src, _dest, line)
+        return line
 
 
 def edit_text(src, dest, text_lines, word_option=ANY_SEQUENCE):
