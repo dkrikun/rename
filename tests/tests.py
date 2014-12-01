@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 import unittest
 
-from rename import is_binary
+from rename import process_file
 
 
-class TestIsBinary(unittest.TestCase):
+class TestProcessFile(unittest.TestCase):
 
     binary_file_path = 'tests/tests_files/binary_file'
 
@@ -27,6 +27,12 @@ class TestIsBinary(unittest.TestCase):
         import os
         os.remove(self.binary_file_path)
 
-    def test_is_binary_should_return_true_if_binary_file(self):
+    def test_process_file_should_skip_binary_file(self):
         "test if is_binary returns true when checking a binary file"
-        self.assertTrue(is_binary(self.binary_file_path))
+
+        self.assertIsNone(
+            process_file('src', 'dest', 'word_option',
+                self.binary_file_path,
+                'diff', 'text_only'
+            )
+        )

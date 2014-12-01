@@ -20,31 +20,13 @@ import difflib
 import shutil
 import re
 
+from binaryornot.check import is_binary
+
 # whole word options
 WHOLE_WORD = 2
 ALLOW_UNDERSCORES = 1
 ANY_SEQUENCE = 0
 
-def is_binary(filename):
-    """Return true if the given filename is binary.
-    @raise EnvironmentError: if the file does not exist or cannot be accessed.
-    @attention: found @ http://bytes.com/topic/python/answers/21222-determine-file-type-binary-text on 6/08/2010
-    @author: Trent Mick <TrentM@ActiveState.com>
-    @author: Jorge Orpinel <jorge@orpinel.com>"""
-    fin = open(filename, 'rb')
-    try:
-        CHUNKSIZE = 1024
-        while 1:
-            chunk = fin.read(CHUNKSIZE)
-            if '\0' in chunk: # found null byte
-                return True
-            if len(chunk) < CHUNKSIZE:
-                break # done
-    # A-wooo! Mira, python no necesita el "except:". Achis... Que listo es.
-    finally:
-        fin.close()
-
-    return False
 
 # copied from massedit.py by Jérôme Lecomte
 def get_paths(patterns, start_dir=None, max_depth=1):
