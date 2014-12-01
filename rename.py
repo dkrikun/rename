@@ -185,6 +185,8 @@ def is_camel_case(id_name):
     True
     >>> is_camel_case('HelloWorld')
     True
+    >>> is_camel_case('helloWorld')
+    False
     >>> is_camel_case('HWorld')
     False
     >>> is_camel_case('Hello6orld')
@@ -210,6 +212,54 @@ def is_camel_case(id_name):
             """, re.VERBOSE)
 
     return camel_case_re.match(id_name) is not None
+
+
+def is_lower_camel_case(id_name):
+    """Check if id_name is written in camel case.
+
+    >>> is_lower_camel_case('')
+    False
+    >>> is_lower_camel_case('_')
+    False
+    >>> is_lower_camel_case('H')
+    False
+    >>> is_lower_camel_case('h')
+    True
+    >>> is_lower_camel_case('hW')
+    True
+    >>> is_lower_camel_case('HW')
+    False
+    >>> is_lower_camel_case('HWW')
+    False
+    >>> is_lower_camel_case('hWhWhWh')
+    True
+    >>> is_lower_camel_case('helloWorld')
+    True
+    >>> is_lower_camel_case('HelloWorld')
+    False
+    >>> is_lower_camel_case('hWorld')
+    True
+    >>> is_lower_camel_case('hello6orld')
+    True
+    >>> is_lower_camel_case('hello_world')
+    False
+    >>> is_lower_camel_case('_hello')
+    False
+    >>> is_lower_camel_case('hello_')
+    False
+    >>> is_lower_camel_case('hello-world')
+    False
+    >>> is_lower_camel_case('helloGoodWorld77')
+    True
+    """
+
+    lower_camel_case_re = re.compile(r"""
+            [a-z]([A-Z]?[a-z0-9]*)*
+
+            $
+            """, re.VERBOSE)
+
+    return lower_camel_case_re.match(id_name) is not None
 
 
 def snake2camel(id_name):
@@ -267,15 +317,111 @@ def camel2snake(id_name):
     return almost_ready.lstrip('_')
 
 
+def snake2lowercamel(id_name):
+    """Change id_name from snake to lower camel case,
+    provided it is in snake case, or else return id_name intact.
+
+    >>> snake2lowercamel('')
+    ''
+    >>> snake2lowercamel('hello_world')
+    'helloWorld'
+    >>> snake2lowercamel('HelloWorld')
+    'HelloWorld'
+    >>> snake2lowercamel('hello9')
+    'hello9'
+    >>> snake2lowercamel('hello9world')
+    'hello9world'
+    >>> snake2lowercamel('hello9_world')
+    'hello9World'
+    >>> snake2lowercamel('h')
+    'h'
+    >>> snake2lowercamel('hw')
+    'hw'
+    >>> snake2lowercamel('hello_good_world77')
+    'helloGoodWorld77'
+    """
+
+    if not is_snake_case(id_name):
+        return id_name
+
+    # Almost camel case, but lowercase the first letter
+    camel = snake2camel(id_name)
+    return camel[0].lower() + camel[1:]
+
+
+def lowercamel2snake(id_name):
+    """Change id_name from lower camel to snake,
+    provided it is in lower camel case, or else return id_name intact.
+
+    >>> lowercamel2snake('helloWorld')
+    'hello_world'
+    >>> lowercamel2snake('hello_world')
+    'hello_world'
+    >>> lowercamel2snake('hello8orld')
+    'hello8orld'
+    >>> lowercamel2snake('h')
+    'h'
+    >>> lowercamel2snake('hW')
+    'h_w'
+    >>> lowercamel2snake('helloGoodWorld77')
+    'hello_good_world77'
+    """
+
+    if not is_lower_camel_case(id_name):
+        return id_name
+
+    word_start = re.compile(r'[A-Z]')
+    almost_ready = word_start.sub(lambda x: '_' + x.group().lower(), id_name)
+    return almost_ready.lstrip('_')
+
+
+def upper2lowercamel(id_name):
+    """Change id_name from upper to lower camel case,
+    provided it is in upper camel case, or return id_name intact.
+
+    >>> upper2lowercamel('')
+    ''
+    >>> upper2lowercamel('H')
+    'h'
+    >>> upper2lowercamel('HelloWorld')
+    'helloWorld'
+    """
+    if not is_camel_case(id_name):
+        return id_name
+
+    return id_name[0].lower() + id_name[1:]
+
+
+def lower2uppercamel(id_name):
+    """Change id_name from upper to lower camel case,
+    provided it is in upper camel case, or return id_name intact.
+
+    >>> lower2uppercamel('')
+    ''
+    >>> lower2uppercamel('h')
+    'H'
+    >>> lower2uppercamel('helloWorld')
+    'HelloWorld'
+    """
+    if not is_lower_camel_case(id_name):
+        return id_name
+
+    return id_name[0].upper() + id_name[1:]
+
+
 def edit_line(src, dest, line, word_option=ANY_SEQUENCE):
     """Rename in a single line of text.
 
+    >>> edit_line('HlWorld', 'WhatsUp', 'hi HlWorld hlWorld HL_WORLD <3')
+    'hi WhatsUp whatsUp WHATS_UP <3'
     >>> edit_line('hello_world', 'whats_up', 'hi hello_world <3')
     'hi whats_up <3'
-    >>> edit_line('hello_world', 'whats_up', 'hi HelloWorld HELLO_WORLD <3')
-    'hi WhatsUp WHATS_UP <3'
-    >>> edit_line('HelloWorld', 'WhatsUp', 'hi HelloWorld HELLO_WORLD <3')
-    'hi WhatsUp WHATS_UP <3'
+    >>> edit_line('hello_world', 'whats_up', 'hi hello_world <3')
+    'hi whats_up <3'
+    >>> edit_line('hl_world', 'whats_up', 'hi HlWorld hlWorld HL_WORLD <3')
+    'hi WhatsUp whatsUp WHATS_UP <3'
+    >>> edit_line('hlWorld', 'whatsUp', 'hi HlWorld hlWorld HL_WORLD <3')
+    'hi WhatsUp whatsUp WHATS_UP <3'
     >>> edit_line('hello__world', 'WhatsUp', 'hi hello__world HELLO_WORLD <3')
     'hi WhatsUp HELLO_WORLD <3'
     >>> edit_line('hello_world', 'whats_up', 'hi hello_world <3', WHOLE_WORD)
@@ -297,18 +443,29 @@ def edit_line(src, dest, line, word_option=ANY_SEQUENCE):
     >>> edit_line('hex_clck', 'hacker_clck', '_HEX_CLCK_H', ALLOW_UNDERSCORES)
     '_HACKER_CLCK_H'
     """
+    src_lowercamel = src_camel = src_snake = src
+    dest_lowercamel = dest_camel = dest_snake = dest
 
-    src_snake = camel2snake(src)
-    dest_snake = camel2snake(dest)
-    src_camel = snake2camel(src)
-    dest_camel = snake2camel(dest)
+    recognized = True
+
+    if is_snake_case(src) and is_snake_case(dest):
+        src_lowercamel, dest_lowercamel = map(snake2lowercamel, (src, dest))
+        src_camel, dest_camel = map(snake2camel, (src, dest))
+
+    elif is_lower_camel_case(src) and is_lower_camel_case(dest):
+        src_snake, dest_snake = map(lowercamel2snake, (src, dest))
+        src_camel, dest_camel = map(lower2uppercamel, (src, dest))
+
+    elif is_camel_case(src) and is_camel_case(dest):
+        src_snake, dest_snake = map(camel2snake, (src, dest))
+        src_lowercamel, dest_lowercamel = map(upper2lowercamel, (src, dest))
+
+    else:
+        recognized = False
+
     src_all_caps = src_snake.upper()
     dest_all_caps = dest_snake.upper()
 
-    # if not recognized as snake or camel, both transforms will leave its
-    # input string intact
-
-    recognized = src_snake != src_camel and dest_snake != dest_camel
     if not recognized:
         logging.debug('case not recognized, performing plain search/replace')
         return line.replace(src, dest)
@@ -316,6 +473,7 @@ def edit_line(src, dest, line, word_option=ANY_SEQUENCE):
     if word_option == ANY_SEQUENCE:
         line = line.replace(src_snake, dest_snake)
         line = line.replace(src_camel, dest_camel)
+        line = line.replace(src_lowercamel, dest_lowercamel)
         return line.replace(src_all_caps, dest_all_caps)
 
     if word_option == WHOLE_WORD:
@@ -323,10 +481,12 @@ def edit_line(src, dest, line, word_option=ANY_SEQUENCE):
 
         src_snake = template.format(src_snake)
         src_camel = template.format(src_camel)
+        src_lowercamel = template.format(src_lowercamel)
         src_all_caps = template.format(src_all_caps)
 
         line = re.sub(src_snake, dest_snake, line)
         line = re.sub(src_camel, dest_camel, line)
+        line = re.sub(src_lowercamel, dest_lowercamel, line)
         return re.sub(src_all_caps, dest_all_caps, line)
 
     if word_option == ALLOW_UNDERSCORES:
@@ -335,16 +495,19 @@ def edit_line(src, dest, line, word_option=ANY_SEQUENCE):
 
         src_snake = src_template.format(src_snake)
         src_camel = src_template.format(src_camel)
+        src_lowercamel = src_template.format(src_lowercamel)
         src_all_caps = src_template.format(src_all_caps)
 
         dest_snake = dest_template.format(dest_snake)
         dest_camel = dest_template.format(dest_camel)
+        dest_lowercamel = src_template.format(dest_lowercamel)
         dest_all_caps = dest_template.format(dest_all_caps)
 
         logging.debug('underscore caps: {}->{}'.format(src_all_caps,
                       dest_all_caps))
         line = re.sub(src_snake, dest_snake, line)
         line = re.sub(src_camel, dest_camel, line)
+        line = re.sub(src_lowercamel, dest_lowercamel, line)
         return re.sub(src_all_caps, dest_all_caps, line)
 
 
