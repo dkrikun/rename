@@ -6,6 +6,9 @@ from setuptools import setup
 
 import rename
 
+requirements = [
+    'binaryornot>=0.3.0',
+]
 
 setup(
     name='rename',
@@ -18,4 +21,5 @@ setup(
     description='Rename a string in CamelCase, snake_case and ALL_CAPS in code and filenames in one go.',
     long_description=open('README.md').read(),
     scripts=['rename.py'],
+    install_requires=requirements,
 )
