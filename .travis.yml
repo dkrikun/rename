@@ -7,4 +7,4 @@ python:
 
 install: echo "nothing to install"
 
-script: python -m doctest rename.py
+script: python -m unittest discover tests/ -v
