@@ -497,6 +497,7 @@ def process_file(src, dest, word_option, path,  # pylint: disable=R0913
     if is_binary(path):
         return
 
+    # if --text-only requested, do not perform substitutions in filepath
     if not text_only:
         new_path = edit_line(src, dest, path, word_option)
     else:
@@ -514,8 +515,11 @@ def process_file(src, dest, word_option, path,  # pylint: disable=R0913
                 .format(path, e))
         return
 
+    # perform substitions in file contents
     out_lines = list(edit_text(src, dest, in_lines, word_option))
 
+    # only output diff to stdout, do not write anything to file (if requested
+    # by --diff)
     if diff:
         diffs = difflib.unified_diff(in_lines, out_lines,
                                      fromfile=path, tofile=new_path)
