@@ -58,12 +58,18 @@ version of the destination string.
 For example, `rename.py hex_clock hacker_clock` above, does the following
 substitutions in text files:
 
-   `hex_clock` --> `hacker_clock`  
-   `HexClock` --> `HackerClock`  
-   `HEX_CLOCK` --> `HACKER_CLOCK`  
+   `hex_clock` --> `hacker_clock`
+   `HexClock` --> `HackerClock`
+   `HEX_CLOCK` --> `HACKER_CLOCK`
 
 Also, by default, the file `hex_clock.h` is renamed to `hacker_clock.h`, file
 rename can be disabled with `-f` flag, see **Usage** below.
+
+### Install
+Simply install it with PIP:
+
+    pip install -e git+https://github.com/dkrikun/rename.git#egg=rename
+
 
 ### Usage
 
@@ -96,3 +102,5 @@ optional arguments:
 ### Dependencies
 
 Python 2.7/3.x will do.
+
+binaryornot>=0.3.0
