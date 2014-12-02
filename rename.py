@@ -507,11 +507,11 @@ def process_file(src, dest, word_option, path,  # pylint: disable=R0913
         with io.open(path, 'r', encoding='utf-8') as in_file:
             in_lines = in_file.readlines()
     except IOError as e:
-        logging.warn('could not read file: {0}, error message: {1}'
+        logging.warn('could not read file, error message: {1}'
                 .format(path, e))
         return
     except UnicodeDecodeError as e:
-        logging.debug('could not read file: {0}, error message: {1}'
+        logging.debug('could not read file, error message: {1}'
                 .format(path, e))
         return
 
@@ -530,7 +530,7 @@ def process_file(src, dest, word_option, path,  # pylint: disable=R0913
             with io.open(new_path, 'w', encoding='utf-8') as out_file:
                 out_file.writelines(out_lines)
         except IOError as e:
-            logging.warn('could not read file: {0}, error message: {1}'
+            logging.warn('could not write file, error message: {1}'
                     .format(path, e))
 
         if new_path != path:
@@ -538,7 +538,7 @@ def process_file(src, dest, word_option, path,  # pylint: disable=R0913
                 shutil.copymode(path, new_path)
                 os.unlink(path)
             except OSError as e:
-                logging.warn('could not delete file: {0}, error message: {1}'
+                logging.warn('could not delete file, error message: {1}'
                         .format(path,e))
                 return
 
