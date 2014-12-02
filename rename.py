@@ -535,6 +535,11 @@ def process_file(src, dest, word_option, path,  # pylint: disable=R0913
 
         if new_path != path:
             try:
+                # explicitly mkdir missing directories (due to possible subst.
+                # in filepath)
+                new_dir = os.path.dirname(new_path)
+                if not os.path.exists(new_dir):
+                    os.makedirs(new_dir)
                 shutil.copymode(path, new_path)
                 os.unlink(path)
             except OSError as e:
