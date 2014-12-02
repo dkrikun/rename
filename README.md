@@ -74,7 +74,7 @@ Simply install it with PIP:
 
 ### Usage
 
-```shell
+```
 usage: rename.py [-h] [--version] [-w] [--almost-word] [-n] [-d] [-f] [-a]
                  [-V] [-q]
                  SOURCE DEST PATTERN [PATTERN ...]
